@@ -4,12 +4,132 @@
 
 :root {
   color-scheme: light;
+  --app-font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  --app-line-height: 1.6;
+  --app-text-primary: #0f172a;
+  --app-text-muted: #475569;
+  --app-surface: #ffffff;
+  --app-surface-subtle: #f8fafc;
+  --app-border-subtle: #e2e8f0;
+  --app-border-strong: #cbd5f5;
+  --app-focus-ring: #2563eb;
+  --app-radius: 0.75rem;
+  --app-spacing: 1.5rem;
+  --app-shadow-soft: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   min-height: 100vh;
+  font-family: var(--app-font-sans);
+  line-height: var(--app-line-height);
+  color: var(--app-text-primary);
+  background-color: var(--app-surface-subtle);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 #root {
   min-height: 100vh;
+}
+
+main {
+  width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--app-text-primary);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin-block: 0;
+  color: var(--app-text-muted);
+}
+
+p + p {
+  margin-top: 0.75rem;
+}
+
+a,
+button {
+  cursor: pointer;
+}
+
+a {
+  color: #1d4ed8;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+a:hover,
+a:focus-visible {
+  color: #1e3a8a;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+::selection {
+  background-color: rgba(37, 99, 235, 0.2);
+  color: var(--app-text-primary);
+}
+
+:focus-visible {
+  outline: 3px solid var(--app-focus-ring);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.text-slate-400,
+.text-slate-500 {
+  --tw-text-opacity: 1 !important;
+  color: var(--app-text-muted) !important;
+}
+
+.text-blue-500 {
+  --tw-text-opacity: 1 !important;
+  color: #2563eb !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

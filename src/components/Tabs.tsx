@@ -109,6 +109,11 @@ const Tabs = ({ tabs, defaultTab }: TabsProps) => {
                 aria-controls={`${tab.id}-panel`}
                 id={`${tab.id}-tab`}
                 onClick={() => handleSelect(tab.id)}
+                title={
+                  tab.description
+                    ? `${tab.label} — ${tab.description}`
+                    : `View ${tab.label} insights`
+                }
                 className={`rounded-lg border px-3 py-2 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white md:text-base ${
                   isActive
                     ? 'border-sky-500 bg-sky-50 text-sky-700 shadow-sm'

@@ -305,7 +305,12 @@ const PipelineHealth = () => {
               <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Team Scores</h3>
               {teamChart ? (
                 <div className="mt-4 h-[320px]">
-                  <Bar data={teamChart.data} options={teamChart.options} />
+                  <Bar
+                    data={teamChart.data}
+                    options={teamChart.options}
+                    aria-label="Bar chart showing pipeline health scores by team"
+                    role="img"
+                  />
                 </div>
               ) : (
                 <p className="mt-4 text-sm text-slate-500">Not enough team data to chart.</p>
@@ -320,7 +325,12 @@ const PipelineHealth = () => {
             </div>
             {sdrChart ? (
               <div className="mt-4 h-[420px]">
-                <Bar data={sdrChart.data} options={sdrChart.options} />
+                <Bar
+                  data={sdrChart.data}
+                  options={sdrChart.options}
+                  aria-label="Bar chart showing pipeline health scores for top-performing SDRs"
+                  role="img"
+                />
               </div>
             ) : (
               <p className="mt-4 text-sm text-slate-500">Not enough SDR data to chart.</p>

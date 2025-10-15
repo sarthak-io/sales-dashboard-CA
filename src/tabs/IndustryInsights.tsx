@@ -265,7 +265,12 @@ const IndustryInsights = () => {
           <h3 className="mb-3 text-base font-semibold text-slate-800">Answer Rate by Industry</h3>
           <div className="h-72">
             {answerRateData && answerRateOptions ? (
-              <Bar data={answerRateData} options={answerRateOptions} />
+              <Bar
+                data={answerRateData}
+                options={answerRateOptions}
+                aria-label="Bar chart comparing industry answer rates"
+                role="img"
+              />
             ) : (
               <div className="flex h-full items-center justify-center rounded-lg bg-slate-50 text-sm text-slate-500">
                 Not enough dial data for the selected filters.
@@ -319,7 +324,12 @@ const IndustryInsights = () => {
           <h3 className="mb-3 text-base font-semibold text-slate-800">Meetings Booked vs Qualified</h3>
           <div className="h-80">
             {meetingData && meetingOptions ? (
-              <Bar data={meetingData} options={meetingOptions} />
+              <Bar
+                data={meetingData}
+                options={meetingOptions}
+                aria-label="Bar chart showing meetings booked versus qualified by industry"
+                role="img"
+              />
             ) : (
               <div className="flex h-full items-center justify-center rounded-lg bg-slate-50 text-sm text-slate-500">
                 Not enough dial data for the selected filters.

@@ -222,6 +222,7 @@ const NoShow = () => {
               : 'border-slate-200 bg-white text-slate-600 shadow-sm hover:border-slate-300 hover:text-slate-800'
           }`}
           aria-pressed={showTopFive}
+          title={showTopFive ? 'Showing the five highest no-show rates' : 'Toggle to show the five highest no-show rates'}
         >
           {showTopFive ? 'Showing Top 5 by No-Show Rate' : 'Top 5 by No-Show Rate'}
         </button>
