@@ -21,6 +21,7 @@ import NoShow from './tabs/NoShow';
 import OutreachHeatmap from './tabs/OutreachHeatmap';
 import TimeToMeeting from './tabs/TimeToMeeting';
 import Objections from './tabs/Objections';
+import PipelineHealth from './tabs/PipelineHealth';
 import { bucketEventsByWeek } from './data/transforms';
 import { useStore } from './store';
 
@@ -91,6 +92,8 @@ const App = () => {
 
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8">
         <KPIBar />
+
+        <PipelineHealth />
 
         <Funnels />
 
