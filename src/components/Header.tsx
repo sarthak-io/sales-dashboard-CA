@@ -197,6 +197,7 @@ const Header = () => {
               onClick={handleDownloadCsv}
               disabled={filteredEvents.length === 0}
               className="inline-flex items-center rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
+              title="Export the current filtered dashboard view as a CSV file"
             >
               Export Current View CSV
             </button>
@@ -204,6 +205,7 @@ const Header = () => {
               type="button"
               onClick={handleTriggerImport}
               className="inline-flex items-center rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:text-slate-900"
+              title="Import dashboard data from a CSV file"
             >
               Import CSV
             </button>
@@ -211,13 +213,15 @@ const Header = () => {
               type="button"
               onClick={resetFilters}
               className="inline-flex items-center rounded-md border border-transparent bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-200"
+              title="Clear all active filters"
             >
               Reset Filters
             </button>
             <button
               type="button"
               onClick={handleResetAndReseed}
-              className="inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-500"
+              className="inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700"
+              title="Generate a new sample dataset and reset filters"
             >
               Reset &amp; Reseed
             </button>

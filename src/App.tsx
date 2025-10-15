@@ -146,7 +146,12 @@ const App = () => {
                 <p className="text-sm text-slate-500">Filtered qualified meetings by event week</p>
               </div>
               <div className="h-80 px-2 py-4">
-                <Line data={chartData} options={chartOptions} />
+                <Line
+                  data={chartData}
+                  options={chartOptions}
+                  aria-label="Line chart showing weekly qualified meetings for the filtered dataset"
+                  role="img"
+                />
               </div>
             </section>
           </>

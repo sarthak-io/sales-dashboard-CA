@@ -131,6 +131,14 @@ const C2CTrends = () => {
 
   const [selectedSdrs, setSelectedSdrs] = useState<string[]>([]);
 
+  const activeSdrNames = useMemo(
+    () =>
+      selectedSdrs
+        .map((id) => series.find((item) => item.id === id)?.name)
+        .filter((name): name is string => Boolean(name)),
+    [selectedSdrs, series],
+  );
+
   useEffect(() => {
     if (series.length === 0) {
       setSelectedSdrs([]);
@@ -271,15 +279,23 @@ const C2CTrends = () => {
                   const disabled = !isActive && !canSelectMore;
 
                   const classes = [
-                    'flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition',
+                    'flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-slate-500',
                     isActive
-                      ? 'border-transparent text-white shadow-sm'
+                      ? 'text-slate-900 shadow-sm'
                       : 'border-slate-200 text-slate-600 hover:bg-slate-100',
                   ];
 
                   if (disabled) {
                     classes.push('cursor-not-allowed opacity-50');
                   }
+
+                  const buttonStyle = isActive
+                    ? {
+                        background: withAlpha(baseColor, 0.18),
+                        borderColor: withAlpha(baseColor, 0.4),
+                        boxShadow: `0 1px 2px ${withAlpha('#0f172a', 0.12)}`,
+                      }
+                    : undefined;
 
                   return (
                     <button
@@ -288,13 +304,9 @@ const C2CTrends = () => {
                       onClick={() => handleToggle(item.id)}
                       disabled={disabled}
                       className={classes.join(' ')}
-                      style={
-                        isActive
-                          ? {
-                              background: baseColor,
-                            }
-                          : undefined
-                      }
+                      style={buttonStyle}
+                      aria-pressed={isActive}
+                      title={`${isActive ? 'Remove' : 'Add'} ${item.name} from the comparison`}
                     >
                       <span
                         className="h-2.5 w-2.5 rounded-full"
@@ -309,7 +321,16 @@ const C2CTrends = () => {
             </div>
             <div className="h-80">
               {selectedSdrs.length > 0 ? (
-                <Line data={chartData} options={chartOptions} />
+                <Line
+                  data={chartData}
+                  options={chartOptions}
+                  aria-label={
+                    activeSdrNames.length > 0
+                      ? `Line chart showing connect to conversation rates over time for ${activeSdrNames.join(', ')}`
+                      : 'Line chart showing connect to conversation rates over time'
+                  }
+                  role="img"
+                />
               ) : (
                 <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-slate-200 bg-slate-50 text-sm text-slate-500">
                   Select an SDR to visualize trends

@@ -61,6 +61,14 @@ const Funnel = ({ title, entityName, stages, onSelect, isSelected = false, descr
       onClick={handleClick}
       disabled={!onSelect || isEmpty}
       aria-pressed={isSelected}
+      aria-label={`${title} funnel for ${entityName}. ${
+        isEmpty
+          ? 'No progression data available for the current filters.'
+          : isSelected
+            ? 'Segment is currently highlighted.'
+            : 'Activate to focus other insights on this segment.'
+      }`}
+      title={`${title} — ${isSelected ? 'Segment selected' : 'Click to focus on this segment'}`}
       className={`${baseClasses}${stateClasses}`}
     >
       <div className="flex items-start justify-between gap-3">
