@@ -20,6 +20,7 @@ import C2CTrends from './tabs/C2CTrends';
 import NoShow from './tabs/NoShow';
 import OutreachHeatmap from './tabs/OutreachHeatmap';
 import TimeToMeeting from './tabs/TimeToMeeting';
+import Objections from './tabs/Objections';
 import { bucketEventsByWeek } from './data/transforms';
 import { useStore } from './store';
 
@@ -98,6 +99,8 @@ const App = () => {
         <OutreachHeatmap />
 
         <C2CTrends />
+
+        <Objections />
 
         <NoShow />
 
