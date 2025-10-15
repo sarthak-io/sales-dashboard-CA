@@ -17,6 +17,7 @@ import Funnels from './tabs/Funnels';
 import BestTime from './tabs/BestTime';
 import IndustryInsights from './tabs/IndustryInsights';
 import C2CTrends from './tabs/C2CTrends';
+import NoShow from './tabs/NoShow';
 import { bucketEventsByWeek } from './data/transforms';
 import { useStore } from './store';
 
@@ -93,6 +94,8 @@ const App = () => {
         <IndustryInsights />
 
         <C2CTrends />
+
+        <NoShow />
 
         <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-100 px-6 py-4">
