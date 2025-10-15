@@ -13,6 +13,7 @@ import { Line } from 'react-chartjs-2';
 import Header from './components/Header';
 import KPIBar from './components/KPIBar';
 import LeadershipBoard from './tabs/LeadershipBoard';
+import Funnels from './tabs/Funnels';
 import { bucketEventsByWeek } from './data/transforms';
 import { useStore } from './store';
 
@@ -83,6 +84,8 @@ const App = () => {
 
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8">
         <KPIBar />
+
+        <Funnels />
 
         <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-100 px-6 py-4">
