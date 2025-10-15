@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import type { Outcome, OutreachEvent } from './types';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -13,12 +14,199 @@ import { Line } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-const SAMPLE_DATA_POINTS = 12;
+const QUALIFIED_OUTCOMES: Outcome[] = ['qualified', 'meeting_booked', 'meeting_held'];
+
+const SAMPLE_OUTREACH_EVENTS: OutreachEvent[] = [
+  {
+    event_id: 'evt-2024-01-01-01',
+    lead_id: 'lead-001',
+    timestamp: '2024-01-02T15:30:00Z',
+    week_start: '2024-01-01T00:00:00Z',
+    sdr_id: 'sdr-001',
+    sdr_name: 'Alex Johnson',
+    team: 'Team A',
+    company: 'Acme Corp',
+    industry: 'SaaS',
+    channel: 'call',
+    outcome: 'qualified',
+    objection: null
+  },
+  {
+    event_id: 'evt-2024-01-08-01',
+    lead_id: 'lead-002',
+    timestamp: '2024-01-09T16:15:00Z',
+    week_start: '2024-01-08T00:00:00Z',
+    sdr_id: 'sdr-002',
+    sdr_name: 'Priya Patel',
+    team: 'Team B',
+    company: 'Northwind Logistics',
+    industry: 'Logistics',
+    channel: 'email',
+    outcome: 'conversation',
+    objection: 'timing'
+  },
+  {
+    event_id: 'evt-2024-01-08-02',
+    lead_id: 'lead-003',
+    timestamp: '2024-01-11T10:00:00Z',
+    week_start: '2024-01-08T00:00:00Z',
+    sdr_id: 'sdr-003',
+    sdr_name: 'Jordan Lee',
+    team: 'Team C',
+    company: 'Bright Retail',
+    industry: 'Retail',
+    channel: 'linkedin',
+    outcome: 'meeting_booked',
+    objection: null
+  },
+  {
+    event_id: 'evt-2024-01-15-01',
+    lead_id: 'lead-004',
+    timestamp: '2024-01-16T13:45:00Z',
+    week_start: '2024-01-15T00:00:00Z',
+    sdr_id: 'sdr-001',
+    sdr_name: 'Alex Johnson',
+    team: 'Team A',
+    company: 'InnoTech',
+    industry: 'SaaS',
+    channel: 'call',
+    outcome: 'meeting_held',
+    objection: 'need'
+  },
+  {
+    event_id: 'evt-2024-01-22-01',
+    lead_id: 'lead-005',
+    timestamp: '2024-01-22T17:05:00Z',
+    week_start: '2024-01-22T00:00:00Z',
+    sdr_id: 'sdr-002',
+    sdr_name: 'Priya Patel',
+    team: 'Team B',
+    company: 'Globex Manufacturing',
+    industry: 'Manufacturing',
+    channel: 'email',
+    outcome: 'qualified',
+    objection: null
+  },
+  {
+    event_id: 'evt-2024-01-29-01',
+    lead_id: 'lead-006',
+    timestamp: '2024-01-30T09:20:00Z',
+    week_start: '2024-01-29T00:00:00Z',
+    sdr_id: 'sdr-003',
+    sdr_name: 'Jordan Lee',
+    team: 'Team C',
+    company: 'Evergreen Finance',
+    industry: 'Financial Services',
+    channel: 'linkedin',
+    outcome: 'meeting_booked',
+    objection: 'budget'
+  },
+  {
+    event_id: 'evt-2024-02-05-01',
+    lead_id: 'lead-007',
+    timestamp: '2024-02-06T14:10:00Z',
+    week_start: '2024-02-05T00:00:00Z',
+    sdr_id: 'sdr-001',
+    sdr_name: 'Alex Johnson',
+    team: 'Team A',
+    company: 'Vector Analytics',
+    industry: 'Analytics',
+    channel: 'call',
+    outcome: 'conversation',
+    objection: 'authority'
+  },
+  {
+    event_id: 'evt-2024-02-12-01',
+    lead_id: 'lead-008',
+    timestamp: '2024-02-13T11:00:00Z',
+    week_start: '2024-02-12T00:00:00Z',
+    sdr_id: 'sdr-002',
+    sdr_name: 'Priya Patel',
+    team: 'Team B',
+    company: 'Nimbus Cloud',
+    industry: 'SaaS',
+    channel: 'email',
+    outcome: 'qualified',
+    objection: null
+  },
+  {
+    event_id: 'evt-2024-02-19-01',
+    lead_id: 'lead-009',
+    timestamp: '2024-02-20T18:20:00Z',
+    week_start: '2024-02-19T00:00:00Z',
+    sdr_id: 'sdr-003',
+    sdr_name: 'Jordan Lee',
+    team: 'Team C',
+    company: 'Bluewater Energy',
+    industry: 'Energy',
+    channel: 'linkedin',
+    outcome: 'no_show',
+    objection: 'timing'
+  },
+  {
+    event_id: 'evt-2024-02-26-01',
+    lead_id: 'lead-010',
+    timestamp: '2024-02-27T10:15:00Z',
+    week_start: '2024-02-26T00:00:00Z',
+    sdr_id: 'sdr-001',
+    sdr_name: 'Alex Johnson',
+    team: 'Team A',
+    company: 'Zenith Health',
+    industry: 'Healthcare',
+    channel: 'call',
+    outcome: 'qualified',
+    objection: 'need'
+  },
+  {
+    event_id: 'evt-2024-03-04-01',
+    lead_id: 'lead-011',
+    timestamp: '2024-03-05T16:55:00Z',
+    week_start: '2024-03-04T00:00:00Z',
+    sdr_id: 'sdr-002',
+    sdr_name: 'Priya Patel',
+    team: 'Team B',
+    company: 'Orbit Security',
+    industry: 'Cybersecurity',
+    channel: 'email',
+    outcome: 'meeting_booked',
+    objection: null
+  },
+  {
+    event_id: 'evt-2024-03-11-01',
+    lead_id: 'lead-012',
+    timestamp: '2024-03-11T12:40:00Z',
+    week_start: '2024-03-11T00:00:00Z',
+    sdr_id: 'sdr-003',
+    sdr_name: 'Jordan Lee',
+    team: 'Team C',
+    company: 'Summit Education',
+    industry: 'Education',
+    channel: 'linkedin',
+    outcome: 'qualified',
+    objection: 'other'
+  }
+];
+
+const formatWeekLabel = (isoWeekStart: string) =>
+  new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date(isoWeekStart));
 
 const App = () => {
   const chartData = useMemo(() => {
-    const labels = Array.from({ length: SAMPLE_DATA_POINTS }, (_, index) => `Week ${index + 1}`);
-    const dataPoints = labels.map((_, index) => 20 + Math.round(Math.sin(index / 2) * 8 + index * 1.5));
+    const weeklyTotals = SAMPLE_OUTREACH_EVENTS.reduce<Record<string, number>>((acc, event) => {
+      if (!acc[event.week_start]) {
+        acc[event.week_start] = 0;
+      }
+
+      if (QUALIFIED_OUTCOMES.includes(event.outcome)) {
+        acc[event.week_start] += 1;
+      }
+
+      return acc;
+    }, {});
+
+    const sortedWeeks = Object.keys(weeklyTotals).sort();
+    const labels = sortedWeeks.map(formatWeekLabel);
+    const dataPoints = sortedWeeks.map((week) => weeklyTotals[week]);
 
     return {
       labels,
