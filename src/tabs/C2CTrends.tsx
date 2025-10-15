@@ -11,7 +11,7 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { computeConnectToConversationRate, type DerivedEvent } from '../data/transforms';
-import { useStore } from '../store';
+import { shallowEqual, useStore } from '../store';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -95,10 +95,13 @@ const buildSdrSeries = (
 };
 
 const C2CTrends = () => {
-  const { filteredEvents, sdrDirectory } = useStore((state) => ({
-    filteredEvents: state.filteredEvents,
-    sdrDirectory: state.dataset.sdrs,
-  }));
+  const { filteredEvents, sdrDirectory } = useStore(
+    (state) => ({
+      filteredEvents: state.filteredEvents,
+      sdrDirectory: state.dataset.sdrs,
+    }),
+    shallowEqual,
+  );
 
   const paletteIndexBySdr = useMemo(() => {
     const map = new Map<string, number>();

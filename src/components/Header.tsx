@@ -1,5 +1,5 @@
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useStore, type FiltersState } from '../store';
+import { shallowEqual, useStore, type FiltersState } from '../store';
 import type { Channel } from '../types';
 import { prepareDatasetFromCsv, serializeDashboardCsv } from '../utils/csv';
 
@@ -31,18 +31,21 @@ const Header = () => {
     filteredEvents,
     seed,
     replaceDataset,
-  } = useStore((state) => ({
-    dataset: state.dataset,
-    filters: state.filters,
-    setFilters: state.setFilters,
-    resetFilters: state.resetFilters,
-    dateRange: state.dateRange,
-    setDateRange: state.setDateRange,
-    reseed: state.reseed,
-    filteredEvents: state.filteredEvents,
-    seed: state.seed,
-    replaceDataset: state.replaceDataset,
-  }));
+  } = useStore(
+    (state) => ({
+      dataset: state.dataset,
+      filters: state.filters,
+      setFilters: state.setFilters,
+      resetFilters: state.resetFilters,
+      dateRange: state.dateRange,
+      setDateRange: state.setDateRange,
+      reseed: state.reseed,
+      filteredEvents: state.filteredEvents,
+      seed: state.seed,
+      replaceDataset: state.replaceDataset,
+    }),
+    shallowEqual,
+  );
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [toast, setToast] = useState<ToastState | null>(null);

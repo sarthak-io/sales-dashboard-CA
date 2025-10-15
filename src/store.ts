@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+import { useRef, useSyncExternalStore } from 'react';
 import { generateDataset, type GeneratedDataset } from './data/generator';
 import { deriveEvents, type DerivedEvent } from './data/transforms';
 import type { Channel } from './types';
@@ -213,8 +213,63 @@ class Store {
 
 const store = new Store();
 
-export const useStore = <T,>(selector: (state: StoreSnapshot) => T): T =>
-  useSyncExternalStore(store.subscribe, () => selector(store.getState()), () => selector(store.getState()));
+export const shallowEqual = <T extends Record<string, unknown>>(a: T, b: T) => {
+  if (a === b) {
+    return true;
+  }
+
+  const aKeys = Object.keys(a);
+  const bKeys = Object.keys(b);
+
+  if (aKeys.length !== bKeys.length) {
+    return false;
+  }
+
+  for (const key of aKeys) {
+    if (!Object.prototype.hasOwnProperty.call(b, key) || !Object.is(a[key], b[key])) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+export const useStore = <T,>(
+  selector: (state: StoreSnapshot) => T,
+  isEqual: (a: T, b: T) => boolean = Object.is,
+): T => {
+  const selectorRef = useRef(selector);
+  const equalityRef = useRef(isEqual);
+  const cachedValueRef = useRef<T>();
+  const hasCachedValueRef = useRef(false);
+
+  if (selectorRef.current !== selector) {
+    selectorRef.current = selector;
+    hasCachedValueRef.current = false;
+  }
+
+  if (equalityRef.current !== isEqual) {
+    equalityRef.current = isEqual;
+    hasCachedValueRef.current = false;
+  }
+
+  return useSyncExternalStore(
+    store.subscribe,
+    () => {
+      const snapshot = store.getState();
+      const selected = selectorRef.current(snapshot);
+
+      if (hasCachedValueRef.current && equalityRef.current(cachedValueRef.current as T, selected)) {
+        return cachedValueRef.current as T;
+      }
+
+      cachedValueRef.current = selected;
+      hasCachedValueRef.current = true;
+      return selected;
+    },
+    () => selectorRef.current(store.getState()),
+  );
+};
 
 export const getStore = () => store;
 
