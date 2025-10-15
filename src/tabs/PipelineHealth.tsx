@@ -9,7 +9,7 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { computeConnectToConversationRate, computeDialToConnectRate, computeMeetingToQualifiedRate, type DerivedEvent } from '../data/transforms';
-import { useStore } from '../store';
+import { shallowEqual, useStore } from '../store';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -196,10 +196,13 @@ const createBarChartConfig = (entities: EntityPipelineHealth[]) => {
 };
 
 const PipelineHealth = () => {
-  const { filteredEvents, sdrDirectory } = useStore((state) => ({
-    filteredEvents: state.filteredEvents,
-    sdrDirectory: state.dataset.sdrs,
-  }));
+  const { filteredEvents, sdrDirectory } = useStore(
+    (state) => ({
+      filteredEvents: state.filteredEvents,
+      sdrDirectory: state.dataset.sdrs,
+    }),
+    shallowEqual,
+  );
 
   const {
     overallScore,

@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import Funnel, { FunnelStageDatum, FunnelStageKey } from '../components/Funnel';
-import { useStore } from '../store';
+import { shallowEqual, useStore } from '../store';
 import type { DerivedEvent } from '../data/transforms';
 
 interface StageDefinition {
@@ -116,12 +116,15 @@ const buildEntityFunnels = (
 const formatSubtitle = (total: number) => `${total.toLocaleString()} total leads`; // first stage count
 
 const Funnels = () => {
-  const { filteredEvents, setFilters, filters, dataset } = useStore((state) => ({
-    filteredEvents: state.filteredEvents,
-    setFilters: state.setFilters,
-    filters: state.filters,
-    dataset: state.dataset,
-  }));
+  const { filteredEvents, setFilters, filters, dataset } = useStore(
+    (state) => ({
+      filteredEvents: state.filteredEvents,
+      setFilters: state.setFilters,
+      filters: state.filters,
+      dataset: state.dataset,
+    }),
+    shallowEqual,
+  );
 
   const sdrNameMap = useMemo(() => {
     const entries = dataset.sdrs.map((sdr) => [sdr.id, sdr.name] as const);

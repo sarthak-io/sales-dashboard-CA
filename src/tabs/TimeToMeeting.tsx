@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useStore } from '../store';
+import { shallowEqual, useStore } from '../store';
 import type { DerivedEvent } from '../data/transforms';
 
 interface HistogramBucket {
@@ -103,10 +103,13 @@ const groupBySdr = (events: DerivedEvent[]): Map<string, DerivedEvent[]> => {
 };
 
 const TimeToMeeting = () => {
-  const { filteredEvents, sdrDirectory } = useStore((state) => ({
-    filteredEvents: state.filteredEvents,
-    sdrDirectory: state.dataset.sdrs,
-  }));
+  const { filteredEvents, sdrDirectory } = useStore(
+    (state) => ({
+      filteredEvents: state.filteredEvents,
+      sdrDirectory: state.dataset.sdrs,
+    }),
+    shallowEqual,
+  );
 
   const qualifiedMeetingEvents = useMemo(
     () =>

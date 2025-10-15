@@ -4,7 +4,7 @@ import {
   computeDialToConnectRate,
   computeMeetingToQualifiedRate,
 } from '../data/transforms';
-import { useStore } from '../store';
+import { shallowEqual, useStore } from '../store';
 
 const formatPercent = (value: number | null, fractionDigits = 1) => {
   if (value === null) {
@@ -110,10 +110,13 @@ interface LeadershipRow {
 }
 
 const LeadershipBoard = () => {
-  const { filteredEvents, sdrDirectory } = useStore((state) => ({
-    filteredEvents: state.filteredEvents,
-    sdrDirectory: state.dataset.sdrs,
-  }));
+  const { filteredEvents, sdrDirectory } = useStore(
+    (state) => ({
+      filteredEvents: state.filteredEvents,
+      sdrDirectory: state.dataset.sdrs,
+    }),
+    shallowEqual,
+  );
 
   const { rows, weekLabels } = useMemo(() => {
     if (filteredEvents.length === 0) {
