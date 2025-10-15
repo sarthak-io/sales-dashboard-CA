@@ -49,6 +49,20 @@ const createInitialDateRange = (): DateRange => ({
   end: null,
 });
 
+const toBoundaryTimestamp = (value: string | null, boundary: 'start' | 'end'): number | null => {
+  if (!value) {
+    return null;
+  }
+
+  const isIsoString = value.includes('T');
+  const dateString = isIsoString
+    ? value
+    : `${value}${boundary === 'start' ? 'T00:00:00Z' : 'T23:59:59.999Z'}`;
+
+  const timestamp = new Date(dateString).getTime();
+  return Number.isNaN(timestamp) ? null : timestamp;
+};
+
 const computeFilteredEvents = (
   events: DerivedEvent[],
   filters: FiltersState,
@@ -65,8 +79,8 @@ const computeFilteredEvents = (
     return events;
   }
 
-  const startTime = range.start ? new Date(range.start).getTime() : null;
-  const endTime = range.end ? new Date(range.end).getTime() : null;
+  const startTime = toBoundaryTimestamp(range.start, 'start');
+  const endTime = toBoundaryTimestamp(range.end, 'end');
 
   return events.filter((event) => {
     if (filters.teams.length > 0 && !filters.teams.includes(event.team)) {
