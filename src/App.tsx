@@ -7,11 +7,12 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import Header from './components/Header';
 import KPIBar from './components/KPIBar';
+import Tabs, { TabDefinition } from './components/Tabs';
 import LeadershipBoard from './tabs/LeadershipBoard';
 import Funnels from './tabs/Funnels';
 import BestTime from './tabs/BestTime';
@@ -86,42 +87,82 @@ const App = () => {
     [],
   );
 
+  const tabs = useMemo<TabDefinition[]>(
+    () => [
+      {
+        id: 'leadership',
+        label: 'Leadership',
+        content: <LeadershipBoard />,
+      },
+      {
+        id: 'funnels',
+        label: 'Funnels',
+        content: <Funnels />,
+      },
+      {
+        id: 'best-time',
+        label: 'Best Time',
+        content: <BestTime />,
+      },
+      {
+        id: 'industry',
+        label: 'Industry',
+        content: <IndustryInsights />,
+      },
+      {
+        id: 'c2c-trends',
+        label: 'C→C Trends',
+        content: <C2CTrends />,
+      },
+      {
+        id: 'no-show',
+        label: 'No-Show',
+        content: <NoShow />,
+      },
+      {
+        id: 'heatmap',
+        label: 'Heatmap',
+        content: <OutreachHeatmap />,
+      },
+      {
+        id: 'time-to-meeting',
+        label: 'Time-to-Meeting',
+        content: <TimeToMeeting />,
+      },
+      {
+        id: 'objections',
+        label: 'Objections',
+        content: <Objections />,
+      },
+      {
+        id: 'pipeline-health',
+        label: 'Pipeline Health',
+        content: (
+          <>
+            <PipelineHealth />
+            <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
+              <div className="border-b border-slate-100 px-6 py-4">
+                <h2 className="text-lg font-semibold text-slate-800">Weekly Performance Snapshot</h2>
+                <p className="text-sm text-slate-500">Filtered qualified meetings by event week</p>
+              </div>
+              <div className="h-80 px-2 py-4">
+                <Line data={chartData} options={chartOptions} />
+              </div>
+            </section>
+          </>
+        ),
+      },
+    ],
+    [chartData, chartOptions],
+  );
+
   return (
     <div className="min-h-screen bg-slate-50">
       <Header />
 
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8">
         <KPIBar />
-
-        <PipelineHealth />
-
-        <Funnels />
-
-        <IndustryInsights />
-
-        <OutreachHeatmap />
-
-        <C2CTrends />
-
-        <Objections />
-
-        <NoShow />
-
-        <TimeToMeeting />
-
-        <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
-          <div className="border-b border-slate-100 px-6 py-4">
-            <h2 className="text-lg font-semibold text-slate-800">Weekly Performance Snapshot</h2>
-            <p className="text-sm text-slate-500">Filtered qualified meetings by event week</p>
-          </div>
-          <div className="h-80 px-2 py-4">
-            <Line data={chartData} options={chartOptions} />
-          </div>
-        </section>
-
-        <BestTime />
-
-        <LeadershipBoard />
+        <Tabs tabs={tabs} defaultTab="leadership" />
       </main>
 
       <footer className="border-t border-slate-200 bg-white py-4 text-center text-sm text-slate-500">
