@@ -12,6 +12,7 @@ import {
 import { Line } from 'react-chartjs-2';
 import Header from './components/Header';
 import KPIBar from './components/KPIBar';
+import LeadershipBoard from './tabs/LeadershipBoard';
 import { bucketEventsByWeek } from './data/transforms';
 import { useStore } from './store';
 
@@ -92,6 +93,8 @@ const App = () => {
             <Line data={chartData} options={chartOptions} />
           </div>
         </section>
+
+        <LeadershipBoard />
       </main>
 
       <footer className="border-t border-slate-200 bg-white py-4 text-center text-sm text-slate-500">
