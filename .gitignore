@@ -1,0 +1,9 @@
+node_modules
+.idea
+.vscode
+.DS_Store
+dist
+*.log
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
