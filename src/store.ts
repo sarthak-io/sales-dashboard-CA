@@ -32,6 +32,7 @@ interface StoreActions {
   resetFilters: () => void;
   setDateRange: (range: DateRange) => void;
   reseed: (seed: string | number) => void;
+  replaceDataset: (dataset: GeneratedDataset) => void;
 }
 
 type StoreSnapshot = StoreState & StoreActions;
@@ -147,6 +148,7 @@ class Store {
       resetFilters: this.resetFilters,
       setDateRange: this.setDateRange,
       reseed: this.reseed,
+      replaceDataset: this.replaceDataset,
     };
   }
 
@@ -193,6 +195,14 @@ class Store {
 
   private reseed = (seed: string | number) => {
     const dataset = generateDataset(seed);
+    const derivedEvents = deriveEvents(dataset.events);
+    const filters = createInitialFilters();
+    const dateRange = createInitialDateRange();
+    const filteredEvents = computeFilteredEvents(derivedEvents, filters, dateRange);
+    this.updateState({ dataset, derivedEvents, filters, dateRange, filteredEvents, seed: dataset.seed });
+  };
+
+  private replaceDataset = (dataset: GeneratedDataset) => {
     const derivedEvents = deriveEvents(dataset.events);
     const filters = createInitialFilters();
     const dateRange = createInitialDateRange();
