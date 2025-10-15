@@ -14,6 +14,7 @@ import Header from './components/Header';
 import KPIBar from './components/KPIBar';
 import LeadershipBoard from './tabs/LeadershipBoard';
 import Funnels from './tabs/Funnels';
+import BestTime from './tabs/BestTime';
 import { bucketEventsByWeek } from './data/transforms';
 import { useStore } from './store';
 
@@ -96,6 +97,8 @@ const App = () => {
             <Line data={chartData} options={chartOptions} />
           </div>
         </section>
+
+        <BestTime />
 
         <LeadershipBoard />
       </main>
