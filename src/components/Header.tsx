@@ -1,38 +1,23 @@
-import { ChangeEvent, useCallback, useMemo } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useStore, type FiltersState } from '../store';
-import type { Channel, OutreachEvent } from '../types';
+import type { Channel } from '../types';
+import { prepareDatasetFromCsv, serializeDashboardCsv } from '../utils/csv';
 
 type FilterKey = keyof FiltersState;
+
+type ToastTone = 'success' | 'error';
+
+type ToastState = {
+  id: number;
+  message: string;
+  tone: ToastTone;
+};
 
 const CHANNEL_OPTIONS: { value: Channel; label: string }[] = [
   { value: 'call', label: 'Calls' },
   { value: 'email', label: 'Emails' },
   { value: 'linkedin', label: 'LinkedIn' },
 ];
-
-const CSV_COLUMNS: Array<keyof OutreachEvent> = [
-  'event_id',
-  'lead_id',
-  'timestamp',
-  'week_start',
-  'sdr_id',
-  'sdr_name',
-  'team',
-  'company',
-  'industry',
-  'channel',
-  'outcome',
-  'objection',
-];
-
-const formatCsvValue = (value: unknown): string => {
-  if (value === null || value === undefined) {
-    return '';
-  }
-
-  const stringValue = String(value).replace(/"/g, '""');
-  return `"${stringValue}"`;
-};
 
 const Header = () => {
   const {
@@ -45,6 +30,7 @@ const Header = () => {
     reseed,
     filteredEvents,
     seed,
+    replaceDataset,
   } = useStore((state) => ({
     dataset: state.dataset,
     filters: state.filters,
@@ -55,13 +41,36 @@ const Header = () => {
     reseed: state.reseed,
     filteredEvents: state.filteredEvents,
     seed: state.seed,
+    replaceDataset: state.replaceDataset,
   }));
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [toast, setToast] = useState<ToastState | null>(null);
+
+  useEffect(() => {
+    if (!toast) {
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      setToast(null);
+    }, 4000);
+
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [toast]);
+
+  const showToast = useCallback((message: string, tone: ToastTone) => {
+    setToast({ id: Date.now(), message, tone });
+  }, []);
 
   const teamOptions = dataset.teams;
   const sdrOptions = dataset.sdrs;
-  const industryOptions = useMemo(() => dataset.industries.map((industry) => industry.name), [
-    dataset.industries,
-  ]);
+  const industryOptions = useMemo(
+    () => dataset.industries.map((industry) => industry.name),
+    [dataset.industries],
+  );
 
   const handleMultiSelectChange = useCallback(
     (key: FilterKey) => (event: ChangeEvent<HTMLSelectElement>) => {
@@ -84,16 +93,12 @@ const Header = () => {
 
   const handleDownloadCsv = useCallback(() => {
     if (filteredEvents.length === 0) {
+      showToast('No filtered data available to export.', 'error');
       return;
     }
 
-    const headerRow = CSV_COLUMNS.map((column) => formatCsvValue(column)).join(',');
-    const dataRows = filteredEvents.map((event) =>
-      CSV_COLUMNS.map((column) => formatCsvValue(event[column])).join(','),
-    );
-
-    const csvContent = [headerRow, ...dataRows].join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const { csv, summaries } = serializeDashboardCsv(filteredEvents, dataset);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
 
     const link = document.createElement('a');
@@ -103,7 +108,56 @@ const Header = () => {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-  }, [filteredEvents]);
+
+    showToast(
+      `Exported ${summaries.totals.totalEvents.toLocaleString()} events with dashboard summaries.`,
+      'success',
+    );
+
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.info('Dashboard summaries included in export', summaries);
+    }
+  }, [dataset, filteredEvents, showToast]);
+
+  const handleTriggerImport = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleFileChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) {
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const text = typeof reader.result === 'string' ? reader.result : '';
+        try {
+          const { dataset: importedDataset } = prepareDatasetFromCsv(text);
+          replaceDataset(importedDataset);
+          showToast(
+            `Imported ${importedDataset.events.length.toLocaleString()} events from CSV.`,
+            'success',
+          );
+        } catch (error) {
+          console.error(error);
+          const message = error instanceof Error ? error.message : 'Failed to import CSV file.';
+          showToast(message, 'error');
+        } finally {
+          event.target.value = '';
+        }
+      };
+      reader.onerror = () => {
+        showToast('Unable to read the selected file.', 'error');
+        event.target.value = '';
+      };
+
+      reader.readAsText(file);
+    },
+    [replaceDataset, showToast],
+  );
 
   const handleResetAndReseed = useCallback(() => {
     const newSeed = Math.random().toString(36).slice(2, 10);
@@ -112,6 +166,17 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
+      {toast ? (
+        <div
+          className={`pointer-events-none fixed right-4 top-4 z-50 min-w-[240px] rounded-md border px-4 py-2 text-sm shadow-lg transition ${
+            toast.tone === 'success'
+              ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
+              : 'border-rose-200 bg-rose-50 text-rose-700'
+          }`}
+        >
+          {toast.message}
+        </div>
+      ) : null}
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -120,13 +185,27 @@ const Header = () => {
             <p className="text-xs text-slate-400">Seed: {seed}</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv,text/csv"
+              className="hidden"
+              onChange={handleFileChange}
+            />
             <button
               type="button"
               onClick={handleDownloadCsv}
               disabled={filteredEvents.length === 0}
               className="inline-flex items-center rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Download Current View CSV
+              Export Current View CSV
+            </button>
+            <button
+              type="button"
+              onClick={handleTriggerImport}
+              className="inline-flex items-center rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:text-slate-900"
+            >
+              Import CSV
             </button>
             <button
               type="button"
