@@ -18,6 +18,7 @@ import BestTime from './tabs/BestTime';
 import IndustryInsights from './tabs/IndustryInsights';
 import C2CTrends from './tabs/C2CTrends';
 import NoShow from './tabs/NoShow';
+import OutreachHeatmap from './tabs/OutreachHeatmap';
 import { bucketEventsByWeek } from './data/transforms';
 import { useStore } from './store';
 
@@ -92,6 +93,8 @@ const App = () => {
         <Funnels />
 
         <IndustryInsights />
+
+        <OutreachHeatmap />
 
         <C2CTrends />
 
