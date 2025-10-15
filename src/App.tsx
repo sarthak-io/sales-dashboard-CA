@@ -15,6 +15,7 @@ import KPIBar from './components/KPIBar';
 import LeadershipBoard from './tabs/LeadershipBoard';
 import Funnels from './tabs/Funnels';
 import BestTime from './tabs/BestTime';
+import IndustryInsights from './tabs/IndustryInsights';
 import { bucketEventsByWeek } from './data/transforms';
 import { useStore } from './store';
 
@@ -87,6 +88,8 @@ const App = () => {
         <KPIBar />
 
         <Funnels />
+
+        <IndustryInsights />
 
         <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-100 px-6 py-4">
