@@ -19,6 +19,7 @@ import IndustryInsights from './tabs/IndustryInsights';
 import C2CTrends from './tabs/C2CTrends';
 import NoShow from './tabs/NoShow';
 import OutreachHeatmap from './tabs/OutreachHeatmap';
+import TimeToMeeting from './tabs/TimeToMeeting';
 import { bucketEventsByWeek } from './data/transforms';
 import { useStore } from './store';
 
@@ -99,6 +100,8 @@ const App = () => {
         <C2CTrends />
 
         <NoShow />
+
+        <TimeToMeeting />
 
         <section className="rounded-xl border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-100 px-6 py-4">
