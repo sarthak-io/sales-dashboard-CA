@@ -13,6 +13,7 @@ export interface DateRange {
 export interface FiltersState {
   teams: string[];
   sdrs: string[];
+  companies: string[];
   industries: string[];
   channels: Channel[];
 }
@@ -40,6 +41,7 @@ const DEFAULT_SEED = 'dashboard-seed';
 const createInitialFilters = (): FiltersState => ({
   teams: [],
   sdrs: [],
+  companies: [],
   industries: [],
   channels: [],
 });
@@ -88,6 +90,10 @@ const computeFilteredEvents = (
     }
 
     if (filters.sdrs.length > 0 && !filters.sdrs.includes(event.sdr_id)) {
+      return false;
+    }
+
+    if (filters.companies.length > 0 && !filters.companies.includes(event.company)) {
       return false;
     }
 
